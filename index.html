@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inspeção de Veículos · FLAPA</title>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<style>
+:root{--bg:#F4F5F7;--cd:#fff;--ink:#1F2933;--mut:#52606D;--ln:#C4CCD4;--ac:#F5A623;--ok:#1B7F4B;--bad:#B42318;--onk:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161B;--cd:#1C232B;--ink:#F0F3F6;--mut:#A9B4BF;--ln:#3A4754;--ok:#4CC38A;--bad:#FF8A80;--onk:#12161B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161B;--cd:#1C232B;--ink:#F0F3F6;--mut:#A9B4BF;--ln:#3A4754;--ok:#4CC38A;--bad:#FF8A80;--onk:#12161B;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:680px;margin:0 auto;padding:12px 14px 40px}
+h1{font-size:24px;margin:8px 0}h2{font-size:21px;margin:14px 0 10px}h3{font-size:16px;margin:18px 0 8px}
+.m{color:var(--mut);font-size:14px;margin:4px 0}
+label{display:block;font-size:14px;font-weight:600;color:var(--mut);margin:10px 0}
+input:not([type=checkbox]),select,textarea{display:block;width:100%;box-sizing:border-box;min-height:46px;margin-top:5px;padding:8px 12px;font:inherit;color:var(--ink);background:var(--cd);border:1px solid var(--ln);border-radius:8px}
+textarea{min-height:80px}
+button,.btn{display:inline-block;box-sizing:border-box;min-height:44px;padding:0 14px;font:inherit;font-weight:700;color:var(--ink);background:var(--cd);border:1px solid var(--ln);border-radius:8px;cursor:pointer;text-align:center;line-height:42px;touch-action:manipulation}
+button:disabled{opacity:.45}
+.pr{width:100%;margin-top:14px;min-height:52px;background:var(--ink);color:var(--onk);border-color:var(--ink)}
+header{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.hr{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.hr button{min-height:36px;line-height:34px;font-size:13px;padding:0 10px}
+nav{display:flex;gap:6px;margin:12px 0;overflow-x:auto}nav button{flex:1;white-space:nowrap}nav .on{background:var(--ink);color:var(--onk)}
+.card{background:var(--cd);border:1px solid var(--ln);border-radius:10px;padding:12px;margin:10px 0}
+.row{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.seg{display:flex;gap:6px;margin-top:10px}.seg button{flex:1;padding:0 4px}
+.seg .on{color:#fff;border-color:transparent}.on.rC,.on.rB{background:var(--ok)}.on.rNC,.on.hi{background:var(--bad)}.on.rNA{background:var(--mut)}.on.md{background:#B26A00}.on.lo{background:#2F6F9F}.seg .on:not([class*=r]):not(.hi):not(.md):not(.lo){background:var(--ink);color:var(--onk)}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid var(--ln);margin:2px 4px 2px 0}
+.chip.ok,.chip.C{color:var(--ok);border-color:var(--ok)}.chip.bad,.chip.hi,.chip.NC{color:var(--bad);border-color:var(--bad)}.chip.ac,.chip.md{color:var(--ink);background:var(--ac);border-color:var(--ac)}
+.nc{margin-top:10px;padding-top:6px;border-top:1px dashed var(--ln)}.ck{display:flex;gap:8px;align-items:center}.ck input{width:22px;height:22px;margin:0}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.ph{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ph img{width:68px;height:68px;object-fit:cover;border-radius:6px;display:block}
+.ph-box{position:relative;display:inline-block}.ph-box button{position:absolute;top:2px;right:2px;min-height:22px;height:22px;width:22px;padding:0;line-height:20px;font-size:13px;border-radius:99px;background:rgba(0,0,0,.75);color:#fff;border:none}
+.pg{height:8px;background:var(--ln);border-radius:4px;margin:6px 0 10px}.pg i{display:block;height:8px;background:var(--ok);border-radius:4px}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kp div{background:var(--cd);border:1px solid var(--ln);border-radius:10px;padding:10px}.kp b{font-size:26px;display:block}
+.br{display:grid;grid-template-columns:1fr 90px 24px;gap:8px;align-items:center;font-size:14px;margin:6px 0}.br div{height:10px;background:var(--ln);border-radius:5px}.br i{display:block;height:10px;background:var(--ac);border-radius:5px}
+.lg{max-width:380px;margin:8vh auto}
+.ov{position:fixed;inset:0;background:#000;z-index:9;display:flex;flex-direction:column;gap:10px;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+.ov-box{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:12px;background:#111}
+.ov-box video{width:100%;height:100%;object-fit:cover}
+.ov-aim{position:absolute;width:min(68vw,260px);height:min(68vw,260px);border:3px solid var(--ac);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.45);pointer-events:none}
+.ov-msg{color:#fff;text-align:center;font-size:14px;margin:0}
+#t{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--onk);padding:10px 16px;border-radius:99px;font-weight:700;display:none;z-index:10}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="t" role="status"></div>
+<script>
+// Utilitários de DOM, sanitização e formatação de data
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>new Date(s).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+
+// Catálogos de tipos de veículos, itens de checklist e criticidade
+const TIPOS={cam:'Caminhão',esc:'Escavadeira',car:'Pá carregadeira',out:'Outro veículo'};
+const BASE=['Freios de serviço e estacionamento','Direção e suspensão','Pneus ou esteiras e rodas','Luzes, buzina e alarme de ré','Vazamentos de óleo ou combustível','Cinto de segurança e extintor'];
+const ESP={cam:['Caçamba e cilindros de basculamento','Retrovisores e câmera de ré','Sistema de arrefecimento'],esc:['Mangueiras e cilindros hidráulicos','Dentes e caçamba','Escada e corrimãos'],car:['Articulação central','Caçamba e pinos','Ar-condicionado e visibilidade'],out:[]};
+const CR={Baixa:'lo',Média:'md',Crítica:'hi'},ST=['Aberta','Em análise','Em reparo','Resolvida'];
+const TABS=[['insp','Inspecionar'],['hist','Histórico'],['ncs','Não conformidades'],['pnl','Painel']];
+
+// Estado persistente no aparelho (modo Offline-First)
+let S=null;
+try{S=JSON.parse(localStorage.getItem('flapa'))}catch(e){}
+if(!S||typeof S!=='object')S={insp:[],ncs:[],user:null,off:false};
+S.insp=Array.isArray(S.insp)?S.insp:[];
+S.ncs=Array.isArray(S.ncs)?S.ncs:[];
+
+const save=()=>{try{localStorage.setItem('flapa',JSON.stringify(S))}catch(e){toast('Armazenamento do aparelho cheio. Sincronize e limpe dados antigos.')}};
+const nd=()=>({cod:'',tipo:'',outro:'',hor:'',loc:'',itens:[],step:0});
+let tab='insp',d=nd();
+const online=()=>!S.off&&navigator.onLine;
+
+// Notificação flutuante e controle de sincronização
+function toast(m){const t=$('#t');if(!t)return;t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2400)}
+function sync(){if(!online())return;if(S.insp.some(i=>!i.sync)){S.insp.forEach(i=>i.sync=true);save();toast('Dados sincronizados')}R()}
+function tg(){S.off=!S.off;save();if(online())sync();else R()}
+function sair(){S.user=null;save();R()}
+addEventListener('online',()=>{if(online())sync()});addEventListener('offline',R);
+
+// Tela de acesso
+const login=()=>`<div class=lg><h1>Inspeção de Veículos</h1><p class=m>FLAPA Engenharia e Mineração. Os dados ficam salvos neste aparelho, mesmo sem internet.</p><label>Nome<input id=nm autocomplete=name></label><label>Perfil<select id=pf><option>Operador<option>Inspetor<option>Manutenção</select></label><label>PIN (demonstração: 1234)<input id=pin type=password inputmode=numeric></label><button class=pr onclick=entrar()>Entrar</button></div>`;
+function entrar(){const n=$('#nm').value.trim();if(!n||$('#pin').value!='1234'){toast('Informe seu nome e o PIN 1234 (demonstração).');return}S.user={nome:n,perfil:$('#pf').value};save();R()}
+
+// Cabeçalho com status online/offline
+const hdr=()=>{const p=S.insp.filter(i=>!i.sync).length,on=online();return `<header><div><b>${esc(S.user.nome)}</b><span class=m> · ${S.user.perfil}</span></div><div class=hr><span class="chip ${on?'ok':'ac'}">${on?'Online':'Offline'}</span>${p?`<span class=chip>${p} pendente(s)</span>`:''}<button onclick=sync() ${on&&p?'':'disabled'}>Sincronizar</button><button onclick=tg()>${S.off?'Voltar online':'Simular offline'}</button><button onclick=sair()>Sair</button></div></header>`};
+
+// Identificação do veículo + campo condicional "Outro veículo"
+const norm=v=>String(v||'').trim().toUpperCase();
+const pend=e=>S.ncs.filter(n=>n.eq==e&&n.st!='Resolvida');
+const eqCard=()=>{if(!d.cod)return '<p class=m>Digite a placa, frota, patrimônio ou qualquer código que identifique o veículo, ou leia o QR Code.</p>';const p=pend(d.cod);return `<div class=card><b>${esc(d.cod)}</b>${p.some(n=>n.crit=='Crítica')?'<span class="chip hi">Parado: NC crítica aberta</span>':''}${p.length?`<span class=chip>${p.length} NC aberta(s)</span>`:'<p class=m>Nenhuma não conformidade aberta para este código.</p>'}</div>`};
+function pick(v){d.cod=norm(v);$('#eqc').innerHTML=eqCard()}
+const tipoNome=()=>d.tipo=='out'?(d.outro.trim()||'Outro veículo'):(TIPOS[d.tipo]||'');
+function selTipo(v){d.tipo=v;if(v!='out')d.outro='';R();if(v=='out')setTimeout(()=>$('#outro')?.focus(),0)}
+
+const idForm=()=>`<h2>Identificar veículo</h2><label>Placa, frota, patrimônio ou código<input id=q value="${esc(d.cod)}" autocomplete=off autocapitalize=characters oninput=pick(this.value)></label><button onclick=qr()>Ler QR Code</button><div id=eqc>${eqCard()}</div><label>Tipo de veículo (define o checklist)<select onchange="selTipo(this.value)"><option value="">Selecione</option>${Object.entries(TIPOS).map(([k,v])=>`<option value="${k}" ${d.tipo==k?'selected':''}>${v}</option>`).join('')}</select></label>${d.tipo=='out'?`<div class=card><label>Qual veículo será inspecionado?<input id=outro placeholder="Ex: Trator de esteira, Caminhão pipa, Retroescavadeira..." value="${esc(d.outro)}" oninput="d.outro=this.value"></label></div>`:''}<label>Horímetro ou odômetro<input value="${esc(d.hor)}" inputmode=decimal oninput="d.hor=this.value"></label><label>Local da inspeção<input value="${esc(d.loc)}" oninput="d.loc=this.value"></label><p class=m>Inspetor: ${esc(S.user.nome)}. Data e hora são registradas ao finalizar.</p><button class=pr onclick=start()>Iniciar checklist</button>`;
+
+const novoOutro=(r=null)=>({t:'Outros (defeito não listado ou outras peças)',r,crit:'',obs:'',man:false,fotos:[],outro:true,desc:''});
+function start(){if(!d.cod||!d.tipo||!d.hor.trim()){toast('Informe o código do veículo, o tipo e o horímetro.');return}if(d.tipo=='out'&&!d.outro.trim()){toast('Informe qual veículo será inspecionado.');$('#outro')?.focus();return}d.itens=BASE.concat(ESP[d.tipo]).map(t=>({t,r:null,crit:'',obs:'',man:false,fotos:[]})).concat([novoOutro()]);d.step=1;R()}
+
+// Leitura de QR Code compatível com Android, iPhone (Safari/Chrome) e fallback por foto
+function parseQR(raw){const s=String(raw||'').trim();if(!s)return '';try{if(/^https?:\/\//i.test(s)){const u=new URL(s),q=u.searchParams.get('eq')||u.searchParams.get('cod')||u.searchParams.get('frota')||u.searchParams.get('placa');if(q)return norm(q);const seg=u.pathname.split('/').filter(Boolean).pop();if(seg)return norm(decodeURIComponent(seg))}}catch(e){}return norm(s)}
+function lerFotoQR(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;const im=new Image(),u=URL.createObjectURL(f);im.onload=async()=>{URL.revokeObjectURL(u);const c=document.createElement('canvas'),k=Math.min(1,1024/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const ctx=c.getContext('2d');ctx.drawImage(im,0,0,c.width,c.height);let code='';if(window.BarcodeDetector){try{const r=await new BarcodeDetector({formats:['qr_code']}).detect(c);if(r[0])code=parseQR(r[0].rawValue)}catch(e){}}if(!code&&window.jsQR){const imgData=ctx.getImageData(0,0,c.width,c.height),res=jsQR(imgData.data,c.width,c.height,{inversionAttempts:'attemptBoth'});if(res&&res.data)code=parseQR(res.data)}if(code){d.cod=code;document.querySelector('.ov')?.remove();toast('QR Code lido: '+code);R()}else toast('Nenhum QR Code encontrado na imagem.')};im.onerror=()=>{URL.revokeObjectURL(u);toast('Não foi possível ler a imagem.')};im.src=u}
+async function qr(){let st=null,raf=0;const o=document.createElement('div');o.className='ov';const box=document.createElement('div');box.className='ov-box';const v=document.createElement('video');v.muted=true;v.autoplay=true;v.setAttribute('playsinline','');const aim=document.createElement('div');aim.className='ov-aim';const msg=document.createElement('p');msg.className='ov-msg';msg.textContent='Aponte a câmera para o QR Code do veículo';const bar=document.createElement('div');bar.className='row';const lbl=document.createElement('label');lbl.className='btn';lbl.style.flex='1';lbl.textContent='Ler de foto';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.capture='environment';fi.className='vh';fi.onchange=()=>lerFotoQR(fi);lbl.append(fi);const b=document.createElement('button');b.style.flex='1';b.textContent='Fechar';const stop=()=>{cancelAnimationFrame(raf);if(st)st.getTracks().forEach(t=>t.stop());o.remove()};b.onclick=stop;box.append(v,aim);bar.append(lbl,b);o.append(msg,box,bar);document.body.append(o);if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg.textContent='Câmera ao vivo indisponível. Use "Ler de foto" abaixo.';return}try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});v.srcObject=st;await v.play();const det=window.BarcodeDetector?new BarcodeDetector({formats:['qr_code']}):null,c=document.createElement('canvas'),ctx=c.getContext('2d',{willReadFrequently:true});let last=0;const scan=async ts=>{if(!o.isConnected)return;if(ts-last>220&&v.readyState>=2&&v.videoWidth){last=ts;let code='';if(det){try{const r=await det.detect(v);if(r[0])code=parseQR(r[0].rawValue)}catch(e){}}if(!code&&window.jsQR){const sc=Math.min(1,640/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*sc);c.height=Math.round(v.videoHeight*sc);ctx.drawImage(v,0,0,c.width,c.height);const imgData=ctx.getImageData(0,0,c.width,c.height),res=jsQR(imgData.data,c.width,c.height,{inversionAttempts:'dontInvert'});if(res&&res.data)code=parseQR(res.data)}if(code){d.cod=code;stop();toast('QR Code lido: '+code);R();return}}raf=requestAnimationFrame(scan)};raf=requestAnimationFrame(scan)}catch(x){msg.textContent='Sem permissão de câmera ao vivo. Toque em "Ler de foto" para fotografar o QR Code.'}}
+
+// Checklist e registro de não conformidades
+const ncForm=i=>{const it=d.itens[i];return `<div class=nc>${it.outro?`<label>Qual peça ou defeito encontrado?<input id="desc-${i}" placeholder="Ex: Para-brisa trincado, retrovisor quebrado, vazamento..." value="${esc(it.desc||'')}" oninput="d.itens[${i}].desc=this.value"></label>`:''}<div class=seg>${Object.keys(CR).map(c=>`<button class="${it.crit==c?'on '+CR[c]:''}" onclick="setC(${i},'${c}')">${c}</button>`).join('')}</div><label>Observações<textarea oninput="d.itens[${i}].obs=this.value">${esc(it.obs)}</textarea></label><label class=ck><input type=checkbox ${it.man?'checked':''} onchange="d.itens[${i}].man=this.checked">Requer avaliação da manutenção</label><div class=ph>${it.fotos.map((f,fi)=>`<div class=ph-box><img src="${f}" alt="Foto da anomalia"><button type=button aria-label="Remover foto" onclick="remFoto(${i},${fi})">×</button></div>`).join('')}</div><div class=row><label class=btn>Câmera<input type=file accept="image/*" capture="environment" class=vh onchange="foto(${i},this)"></label><label class=btn>Galeria<input type=file accept="image/*" multiple class=vh onchange="foto(${i},this)"></label>${it.outro?`<button type=button onclick="addOutro()">+ Outro defeito</button>`:''}</div></div>`};
+const chk=()=>{const n=d.itens.filter(i=>i.r).length,L={C:'Conforme',NC:'Não conforme',NA:'N/A'},totOut=d.itens.filter(x=>x.outro).length;return `<div class=row><b>${esc(d.cod)} · ${esc(tipoNome())}</b><span class=m>${n}/${d.itens.length}</span></div><div class=pg><i style="width:${n/d.itens.length*100}%"></i></div>${d.itens.map((it,i)=>`<div class=card><div class=row><b>${esc(it.t)}</b>${it.outro&&totOut>1?`<button style="min-height:32px;line-height:30px;padding:0 10px;font-size:13px" onclick="remOutro(${i})">Remover</button>`:''}</div><div class=seg>${['C','NC','NA'].map(r=>`<button class="${it.r==r?'on r'+r:''}" onclick="setR(${i},'${r}')">${L[r]}</button>`).join('')}</div>${it.r=='NC'?ncForm(i):''}</div>`).join('')}<div class=row><button onclick="d.step=0;R()">Voltar</button><button onclick=allC()>Marcar tudo conforme</button></div><button class=pr onclick=send()>Finalizar inspeção</button>`};
+function setR(i,r){const it=d.itens[i];it.r=r;if(r!='NC'){it.crit='';it.man=false}R();if(it.outro&&r=='NC')setTimeout(()=>$('#desc-'+i)?.focus(),0)}
+function addOutro(){d.itens.push(novoOutro('NC'));const idx=d.itens.length-1;R();setTimeout(()=>$('#desc-'+idx)?.focus(),0)}
+function remOutro(i){d.itens.splice(i,1);R()}
+function remFoto(i,fi){d.itens[i].fotos.splice(fi,1);R()}
+function setC(i,c){const it=d.itens[i];it.crit=c;if(c=='Crítica')it.man=true;R()}
+function allC(){d.itens.forEach(i=>{if(!i.r)i.r='C'});R()}
+function foto(i,inp){const files=[...(inp.files||[])];inp.value='';files.forEach(f=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{URL.revokeObjectURL(u);const c=document.createElement('canvas'),k=Math.min(1,720/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);d.itens[i].fotos.push(c.toDataURL('image/jpeg',.65));R()};im.onerror=()=>{URL.revokeObjectURL(u);toast('Não foi possível carregar a foto.')};im.src=u})}
+const itemNome=i=>i.outro&&i.desc?.trim()?'Outros: '+i.desc.trim():i.t;
+function send(){if(d.itens.some(i=>!i.r)){toast('Responda todos os itens.');return}const semDesc=d.itens.findIndex(i=>i.outro&&i.r=='NC'&&!i.desc?.trim());if(semDesc>=0){toast('Descreva qual peça ou defeito foi encontrado em "Outros".');$('#desc-'+semDesc)?.focus();return}if(d.itens.some(i=>i.r=='NC'&&!i.crit)){toast('Informe a criticidade de cada não conformidade.');return}
+const dt=new Date().toISOString(),id='INS-'+Date.now().toString(36).toUpperCase();
+S.insp.push({id,eq:d.cod,nome:tipoNome(),por:S.user.nome,dt,hor:d.hor,loc:d.loc,r:d.itens.map(i=>({t:itemNome(i),r:i.r})),sync:false});
+d.itens.filter(i=>i.r=='NC').forEach((i,k)=>S.ncs.push({id:id+'-'+(k+1),ins:id,eq:d.cod,item:itemNome(i),crit:i.crit,man:i.man,obs:i.obs,fotos:i.fotos,st:'Aberta',h:[[dt,S.user.nome,'Aberta']]}));
+d=nd();save();toast('Inspeção registrada');tab='ncs';if(online())sync();else R()}
+
+// Visualizações das abas
+const V={
+insp:()=>d.step?chk():idForm(),
+hist:()=>{const l=[...S.insp].reverse();return '<h2>Histórico de inspeções</h2>'+(l.length?l.map(i=>`<details class=card><summary><b>${esc(i.eq)}</b> · ${fmt(i.dt)} · ${esc(i.por)} <span class="chip ${i.sync?'ok':'ac'}">${i.sync?'Sincronizada':'Pendente'}</span></summary><p class=m>${i.id} · ${i.nome?esc(i.nome)+' · ':''}Horímetro ${esc(i.hor)} · ${esc(i.loc)}</p>${i.r.map(x=>`<div class=row><span>${esc(x.t)}</span><span class="chip ${x.r}">${x.r=='C'?'Conforme':x.r=='NC'?'Não conforme':'N/A'}</span></div>`).join('')}</details>`).join(''):'<p class=m>Nenhuma inspeção registrada ainda.</p>')},
+ncs:()=>{const l=[...S.ncs].reverse();return '<h2>Acompanhamento de não conformidades</h2>'+(l.length?l.map(n=>`<div class=card><div class=row><b>${esc(n.eq)}</b><span><span class="chip ${CR[n.crit]}">${n.crit}</span><span class=chip>${n.st}</span></span></div><div>${esc(n.item)}</div>${n.obs?`<p class=m>${esc(n.obs)}</p>`:''}<div class=ph>${n.fotos.map(f=>`<img src="${f}" alt="Foto da anomalia">`).join('')}</div><p class=m>${n.man?'Requer avaliação da manutenção. ':''}${n.h.map(h=>fmt(h[0])+' · '+esc(h[2])+' ('+esc(h[1])+')').join(' → ')}</p>${S.user.perfil=='Manutenção'?`<div class=seg>${ST.map(s=>`<button class="${n.st==s?'on':''}" onclick="setS('${n.id}','${s}')">${s}</button>`).join('')}</div>`:''}</div>`).join(''):'<p class=m>Nenhuma não conformidade registrada.</p>')+(S.user.perfil!='Manutenção'?'<p class=m>Somente o perfil Manutenção altera o status.</p>':'')},
+pnl:()=>{const o=S.ncs.filter(n=>n.st!='Resolvida'),cr=o.filter(n=>n.crit=='Crítica'),
+cnt=k=>{const m={};S.ncs.forEach(n=>m[n[k]]=(m[n[k]]||0)+1);return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5)},
+bar=l=>{const mx=l[0]?l[0][1]:1;return l.map(([k,v])=>`<div class=br><span>${esc(k)}</span><div><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join('')||'<p class=m>Sem dados.</p>'},
+rec=Object.entries(S.ncs.reduce((m,n)=>{const k=n.eq+'|'+n.item;m[k]=(m[k]||0)+1;return m},{})).filter(([k,v])=>v>=2);
+return `<h2>Painel de indicadores</h2><div class=kp><div><b>${S.insp.length}</b>Inspeções</div><div><b>${o.length}</b>NCs abertas</div><div><b>${cr.length}</b>NCs críticas abertas</div><div><b>${new Set(cr.map(n=>n.eq)).size}</b>Veículos parados</div></div><h3>Itens com mais falhas</h3>${bar(cnt('item'))}<h3>NCs por veículo</h3>${bar(cnt('eq'))}<h3>Problemas recorrentes</h3>${rec.length?rec.map(([k,v])=>`<div class=card><b>${esc(k.replace('|',' · '))}</b><p class=m>${v} ocorrências. Sugestão: avaliar manutenção preventiva.</p></div>`).join(''):'<p class=m>Nenhum item falhou 2 vezes ou mais no mesmo veículo.</p>'}<button onclick=demo()>Carregar dados de exemplo</button>`}};
+
+function setS(id,s){const n=S.ncs.find(x=>x.id==id);n.st=s;n.h.push([new Date().toISOString(),S.user.nome,s]);save();R()}
+function demo(){const EX=[['EXEMPLO-01','Caminhão'],['EXEMPLO-02','Escavadeira'],['EXEMPLO-03','Pá carregadeira']],it=['Freios de serviço e estacionamento','Pneus ou esteiras e rodas','Vazamentos de óleo ou combustível'],c=['Baixa','Média','Crítica'];
+for(let k=0;k<8;k++){const e=EX[k%3],dt=new Date(Date.now()-k*864e5).toISOString(),id='DEMO-'+k;S.insp.push({id,eq:e[0],nome:e[1],por:'Exemplo',dt,hor:String(1000+k*10),loc:'Pátio',r:[{t:it[k%3],r:'NC'},{t:'Direção e suspensão',r:'C'}],sync:true});S.ncs.push({id:id+'-1',ins:id,eq:e[0],item:it[k%3],crit:c[k%3],man:k%3>0,obs:'',fotos:[],st:k<3?'Aberta':k<5?'Em reparo':'Resolvida',h:[[dt,'Exemplo','Aberta']]})}
+save();R()}
+
+// Renderização principal da interface
+function R(){const a=$('#app');if(!a)return;if(!S.user){a.innerHTML=login();return}
+const T=TABS.filter(t=>t[0]!='pnl'||S.user.perfil!='Operador');if(!T.some(t=>t[0]==tab))tab='insp';
+a.innerHTML=hdr()+`<nav>${T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';R()">${t[1]}</button>`).join('')}</nav><main>${V[tab]()}</main>`}
+R();
+</script>
+</body>
+</html>
